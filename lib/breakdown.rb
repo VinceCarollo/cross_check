@@ -7,7 +7,7 @@ class Breakdown
 
     #sets first line of csv (headers) to keys of 'tracker' hash
     CSV.readlines(path)[0].each do |header|
-      tracker[header.to_sym] = []
+      tracker[header.to_sym.downcase] = []
     end
 
     #pushes all matching data of keys into tacker values

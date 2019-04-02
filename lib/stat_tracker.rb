@@ -17,9 +17,6 @@ class StatTracker
   end
 
   def self.from_csv(locations)
-    # @games = CSV.read(locations[:games])
-    # @teams = locations[:teams]
-    # @game_teams = locations[:game_teams]
     games = {}
     teams = {}
     game_teams = {}
@@ -34,7 +31,6 @@ class StatTracker
         game_teams = Breakdown.read(path)
       end
     end
-    stat_tracker = StatTracker.new(games, teams, game_teams)
-    stat_tracker
+    StatTracker.new(games, teams, game_teams)
   end
 end
