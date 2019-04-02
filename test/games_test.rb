@@ -8,7 +8,7 @@ require './lib/stat_tracker'
 class GamesTest < Minitest::Test
   def setup
     game_path = './data/game_dummy.csv'
-    team_path = './data/team_info_dummy.csv'
+    team_path = './data/team_info.csv'
     game_teams_path = './data/game_teams_stats_dummy.csv'
 
     locations = {
@@ -26,7 +26,8 @@ class GamesTest < Minitest::Test
 
   def test_methods_return_correct_columns
     assert_equal "P", @games.type.first
-    assert_equal ["2", "2", "2"], @games.away_goals
+    expected = ["2", "2", "2", "3", "2", "1", "1", "4", "2", "3", "3", "0", "2", "3", "7", "4", "5", "1", "3"]
+    assert_equal expected, @games.away_goals
     assert_equal "America/New_York", @games.venue_time_zone_id.first
   end
 end
