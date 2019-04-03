@@ -23,13 +23,13 @@ class StatTracker
 
     locations.each do |name, path|
       if name == :games
-        games = Breakdown.read(path)
+        games = Breakdown.read_games(path)
       elsif name == :teams
-        teams = Breakdown.read(path)
-        # binding.pry
+        teams = Breakdown.read_teams(path)
       elsif name == :game_teams
-        game_teams = Breakdown.read(path)
+        game_teams = Breakdown.read_game_teams(path)
       end
+
     end
     StatTracker.new(games, teams, game_teams)
   end
