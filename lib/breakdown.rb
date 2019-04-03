@@ -1,20 +1,34 @@
 require 'csv'
+require './lib/games'
+require './lib/teams'
+require './lib/game_teams'
 
 class Breakdown
 
-  def self.read(path)
-    tracker = {}
 
-    #sets first line of csv (headers) to keys of 'tracker' hash
-    CSV.readlines(path)[0].each do |header|
-      tracker[header.to_sym.downcase] = []
-    end
+  def self.read_games(path)
+    tracker = []
 
-    #pushes all matching data of keys into tacker values
     CSV.foreach(path, {:headers => true, :header_converters => :symbol}) do |row|
-      tracker.map do |type, data|
-        data << row[type]
-      end
+      tracker << Games.new(row)
+    end
+    tracker
+  end
+
+  def self.read_teams(path)
+    tracker = []
+
+    CSV.foreach(path, {:headers => true, :header_converters => :symbol}) do |row|
+      tracker << Teams.new(row)
+    end
+    tracker
+  end
+
+  def self.read_game_teams(path)
+    tracker = []
+
+    CSV.foreach(path, {:headers => true, :header_converters => :symbol}) do |row|
+      tracker << GameTeams.new(row)
     end
     tracker
   end
