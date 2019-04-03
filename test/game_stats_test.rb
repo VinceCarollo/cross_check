@@ -20,8 +20,8 @@ class GameStatsTest < Minitest::Test
     assert_instance_of GameStats, @game_stats
   end
 
-  def test_highest_total_score
-    assert_equal 12, @game_stats.highest_total_score
-  end
+  # def test_highest_total_score
+  #   assert_equal 12, @game_stats.highest_total_score
+  # end
 
 end

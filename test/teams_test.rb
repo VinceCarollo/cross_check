@@ -17,9 +17,12 @@ class TeamsTest < Minitest::Test
   end
 
   def test_teams_methods_can_access_columns
-    expected = ["23", "16", "14", "31", "6", "10", "17", "12", "29", "34", "20", "11", "30", "1", "37", "24", "18", "32", "28", "22", "21", "27", "15", "33", "5", "36", "35", "38", "26", "19", "25", "28", "35"]
-    assert_equal expected, @teams.franchise_id
-    assert_equal "NJD", @teams.abbreviation.first
-    assert_equal "/api/v1/teams/1", @teams.link.first
+    assert_equal 33, @stat_tracker.teams.length
+    assert_equal "/api/v1/teams/14", @stat_tracker.teams[3].link
+    assert_equal "Oilers", @stat_tracker.teams[30].team_name
+    assert_equal "Phoenix", @stat_tracker.teams[18].short_name
+    assert_equal "36", @stat_tracker.teams[25].franchise_id
+    assert_equal "17", @stat_tracker.teams[7].team_id
+    assert_equal "Coyotes", @stat_tracker.teams[18].team_name
   end
 end

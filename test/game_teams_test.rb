@@ -14,14 +14,16 @@ class GameTeamsTest < Minitest::Test
  end
 
  def test_game_teams_exists
-   @game_teams = GameTeams.new(@stat_tracker.game_teams)
+   assert_instance_of GameTeams, @game_teams
  end
 
  def test_methods_return_correct_columns
-   assert_equal "2012030221", @game_teams.game_id.first
-   assert_equal "John Tortorella", @game_teams.head_coach.first
-
-   expected = ["3", "4", "5", "3", "3", "5", "5", "3", "2", "2", "2", "2", "3", "3"]
-   assert_equal expected, @game_teams.power_play_opportunities
+   assert_equal "2012030221" , @stat_tracker.game_teams[0].game_id
+   assert_equal "51.7", @stat_tracker.game_teams[2].face_off_win_percentage
+   assert_equal "Darryl Sutter", @stat_tracker.game_teams[6].head_coach
+   assert_equal "0", @stat_tracker.game_teams[10].power_play_goals
+   assert_equal "4", @stat_tracker.game_teams[11].pim
+   assert_equal "10", @stat_tracker.game_teams[13].giveaways
+   assert_equal 14, @stat_tracker.game_teams.length
  end
 end
