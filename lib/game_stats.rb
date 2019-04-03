@@ -4,5 +4,4 @@ class GameStats
   def initialize(games)
     @games = games
   end
-
 end
