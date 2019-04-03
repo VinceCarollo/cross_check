@@ -23,14 +23,14 @@ class GameTeams
    @won                      = row[3]
    @settled_in               = row[4]
    @head_coach               = row[5]
-   @goals                    = row[6]
-   @shots                    = row[7]
-   @hits                     = row[8]
-   @pim                      = row[9]
-   @power_play_opportunities = row[10]
-   @power_play_goals         = row[11]
-   @face_off_win_percentage  = row[12]
-   @giveaways                = row[13]
-   @takeaways                = row[14]
+   @goals                    = row[6].to_i
+   @shots                    = row[7].to_i
+   @hits                     = row[8].to_i
+   @pim                      = row[9].to_i
+   @power_play_opportunities = row[10].to_i
+   @power_play_goals         = row[11].to_i
+   @face_off_win_percentage  = row[12].to_i
+   @giveaways                = row[13].to_i
+   @takeaways                = row[14].to_i
  end
 end
