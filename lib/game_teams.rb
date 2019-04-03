@@ -29,7 +29,7 @@ class GameTeams
    @pim                      = row[9].to_i
    @power_play_opportunities = row[10].to_i
    @power_play_goals         = row[11].to_i
-   @face_off_win_percentage  = row[12].to_i
+   @face_off_win_percentage  = row[12].to_f
    @giveaways                = row[13].to_i
    @takeaways                = row[14].to_i
  end
