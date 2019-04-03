@@ -1,6 +1,6 @@
-require './lib/stat_tracker'
-require './lib/stat_tracker_dummy_initiator'
+require_relative './stat_tracker'
+require_relative './stat_tracker_initiator'
 
-stat_tracker = StatTrackerDummyInitiator.create
+stat_tracker = StatTrackerInitiator.create
 
 require 'pry'; binding.pry

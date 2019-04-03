@@ -1,8 +1,5 @@
-# Create a class method call from_csv
-require 'csv'
 require 'pry'
-require './lib/breakdown'
-# require './lib/module'
+require_relative './breakdown'
 
 class StatTracker
 
