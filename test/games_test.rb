@@ -9,11 +9,6 @@ require './lib/stat_tracker_dummy_initiator'
 class GamesTest < Minitest::Test
   def setup
     @stat_tracker = StatTrackerDummyInitiator.create
-    @games = Games.new(@stat_tracker.games)
-  end
-
-  def test_game_teams_exist
-    assert_instance_of Games, @games
   end
 
   def test_games_has_attributes
