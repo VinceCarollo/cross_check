@@ -12,16 +12,22 @@ class GameStatsTest < Minitest::Test
 
   def setup
     @stat_tracker = StatTrackerDummyInitiator.create
-    @games = Games.new(@stat_tracker.games)
-    @game_stats = GameStats.new(@games)
+    @game_stats = GameStats.new(@stat_tracker.games)
   end
 
   def test_it_exists
     assert_instance_of GameStats, @game_stats
   end
 
-  # def test_highest_total_score
-  #   assert_equal 12, @game_stats.highest_total_score
-  # end
+  def test_highest_total_score
+    assert_equal 9, @game_stats.highest_total_score
+  end
 
+  def test_lowest_total_score
+    assert_equal 2, @game_stats.lowest_total_score
+  end
+
+  def test_biggest_blowout
+    assert_equal 5, @game_stats.biggest_blowout
+  end
 end

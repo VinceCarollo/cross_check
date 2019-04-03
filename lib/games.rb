@@ -22,8 +22,8 @@ class Games
     @date_time              = row[3]
     @away_team_id           = row[4]
     @home_team_id           = row[5]
-    @away_goals             = row[6]
-    @home_goals             = row[7]
+    @away_goals             = row[6].to_i
+    @home_goals             = row[7].to_i
     @outcome                = row[8]
     @home_rink_side_start   = row[9]
     @venue                  = row[10]
