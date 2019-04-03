@@ -3,22 +3,13 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require 'pry'
 require './lib/stat_tracker'
+require './lib/stat_tracker_dummy_initiator'
 
 
 class StatTrackerTest < Minitest::Test
 
   def setup
-    game_path = './data/game_dummy.csv'
-    team_path = './data/team_info.csv'
-    game_teams_path = './data/game_teams_stats_dummy.csv'
-
-    locations = {
-      games: game_path,
-      teams: team_path,
-      game_teams: game_teams_path
-    }
-
-    @stat_tracker = StatTracker.from_csv(locations)
+    @stat_tracker = StatTrackerDummyInitiator.create
   end
 
   def test_stat_tracker_exists
