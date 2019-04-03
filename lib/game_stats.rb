@@ -1,4 +1,5 @@
 require 'pry'
+
 class GameStats
   attr_reader :games
 
@@ -64,6 +65,15 @@ class GameStats
       end
     end
     result
+  end
+
+  def average_goals_per_game
+    game_count = 0
+    goals = @games.sum do |game|
+      game_count += 1
+      game.away_goals + game.home_goals
+    end
+    (goals / game_count.to_f).round(2)
   end
 
 end
