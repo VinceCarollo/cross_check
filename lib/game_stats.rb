@@ -71,4 +71,18 @@ module GameStats
     (goals / game_count.to_f).round(2)
   end
 
+  def average_goals_by_season
+
+    games_by_season = self.games.group_by do |game|
+       game.season
+    end
+
+    games_by_season.transform_values do |games_per_season|
+      total_goals = games_per_season.sum do |game|
+        game.home_goals + game.away_goals.to_f
+      end
+      (total_goals / games_per_season.length).round(2)
+    end
+  end
+
 end
