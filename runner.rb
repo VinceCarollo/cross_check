@@ -1,17 +1,6 @@
-require './lib/stat_tracker'
+require_relative './stat_tracker'
+require_relative './stat_tracker_initiator'
 
-game_path = './data/game_dummy.csv'
-team_path = './data/team_info.csv'
-game_teams_path = './data/game_teams_stats_dummy.csv'
-
-locations = {
-  games: game_path,
-  teams: team_path,
-  game_teams: game_teams_path
-}
-
-stat_tracker = StatTracker.from_csv(locations)
-
-
+stat_tracker = StatTrackerInitiator.create
 
 require 'pry'; binding.pry

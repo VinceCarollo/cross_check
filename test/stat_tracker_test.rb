@@ -3,35 +3,58 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require 'pry'
 require './lib/stat_tracker'
+require './lib/stat_tracker_dummy_initiator'
 
 
 class StatTrackerTest < Minitest::Test
 
   def setup
-    game_path = './data/game_dummy.csv'
-    team_path = './data/team_info.csv'
-    game_teams_path = './data/game_teams_stats_dummy.csv'
-
-    locations = {
-      games: game_path,
-      teams: team_path,
-      game_teams: game_teams_path
-    }
-
-    @stat_tracker = StatTracker.from_csv(locations)
+    @stat_tracker = StatTrackerDummyInitiator.create
   end
 
   def test_stat_tracker_exists
     assert_instance_of StatTracker, @stat_tracker
   end
 
-  def test_it_can_get_correct_info_from_all_different_sources
+  def test_highest_total_score
+    assert_equal 9, @stat_tracker.highest_total_score
+  end
 
-    actual = @stat_tracker.game_teams[:hoa][0]
+  def test_lowest_total_score
+    assert_equal 2, @stat_tracker.lowest_total_score
+  end
 
-    assert_equal "away", actual
+  def test_biggest_blowout
+    assert_equal 5, @stat_tracker.biggest_blowout
+  end
 
+  def test_percentage_home_wins
+    assert_equal 33.33, @stat_tracker.percentage_home_wins("26")
+  end
 
+  def test_percentage_visitor_wins
+    assert_equal 50.0, @stat_tracker.percentage_visitor_wins("14")
+  end
 
+  def test_count_of_games_by_season
+    expected = {
+      "20122013" => 6
+    }
+    assert_equal expected, @stat_tracker.count_of_games_by_season("20122013")
+  end
+
+  def test_average_goals_per_game
+    assert_equal 5.37, @stat_tracker.average_goals_per_game
+  end
+
+  def test_average_goals_by_season
+    expected = {
+                "20122013"=>4.67,
+                "20132014"=>6.0,
+                "20162017"=>5.75,
+                "20172018"=>4.67,
+                "20152016"=>6.2
+              }
+    assert_equal expected, @stat_tracker.average_goals_by_season
   end
 end

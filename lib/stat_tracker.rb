@@ -1,10 +1,9 @@
-# Create a class method call from_csv
-require 'csv'
 require 'pry'
-require './lib/breakdown'
-# require './lib/module'
+require_relative './breakdown'
+require_relative './game_stats'
 
 class StatTracker
+  include GameStats
 
   attr_reader :games,
               :teams,
@@ -23,13 +22,13 @@ class StatTracker
 
     locations.each do |name, path|
       if name == :games
-        games = Breakdown.read(path)
+        games = Breakdown.read_games(path)
       elsif name == :teams
-        teams = Breakdown.read(path)
-        # binding.pry
+        teams = Breakdown.read_teams(path)
       elsif name == :game_teams
-        game_teams = Breakdown.read(path)
+        game_teams = Breakdown.read_game_teams(path)
       end
+
     end
     StatTracker.new(games, teams, game_teams)
   end

@@ -6,12 +6,12 @@ class Teams
               :abbreviation,
               :link
 
-  def initialize(stats)
-    @team_id       = stats[:team_id]
-    @franchise_id  = stats[:franchiseid]
-    @short_name    = stats[:shortname]
-    @team_name     = stats[:teamname]
-    @abbreviation  = stats[:abbreviation]
-    @link          = stats[:link]
+  def initialize(row)
+    @team_id       = row[0]
+    @franchise_id  = row[1]
+    @short_name    = row[2]
+    @team_name     = row[3]
+    @abbreviation  = row[4]
+    @link          = row[5]
   end
 end

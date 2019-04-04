@@ -4,30 +4,22 @@ require 'minitest/pride'
 require './lib/games'
 require 'pry'
 require './lib/stat_tracker'
+require './lib/stat_tracker_dummy_initiator'
 
 class GamesTest < Minitest::Test
   def setup
-    game_path = './data/game_dummy.csv'
-    team_path = './data/team_info.csv'
-    game_teams_path = './data/game_teams_stats_dummy.csv'
-
-    locations = {
-      games: game_path,
-      teams: team_path,
-      game_teams: game_teams_path
-    }
-    @stat_tracker = StatTracker.from_csv(locations)
-    @games = Games.new(@stat_tracker.games)
+    @stat_tracker = StatTrackerDummyInitiator.create
   end
 
-  def test_games_exisist
-    assert_instance_of Games, @games
+  def test_games_has_attributes
+    assert_equal "2012030221" , @stat_tracker.games[0].game_id
+    assert_equal "2013-05-21", @stat_tracker.games[2].date_time
+    assert_equal "R", @stat_tracker.games[6].type
+    assert_equal "left", @stat_tracker.games[9].home_rink_side_start
+    assert_equal "CONSOL Energy Center", @stat_tracker.games[17].venue
+    assert_equal "away win REG", @stat_tracker.games[13].outcome
+    assert_equal "20162017", @stat_tracker.games[18].season
   end
 
-  def test_methods_return_correct_columns
-    assert_equal "P", @games.type.first
-    expected = ["2", "2", "2", "3", "2", "1", "1", "4", "2", "3", "3", "0", "2", "3", "7", "4", "5", "1", "3"]
-    assert_equal expected, @games.away_goals
-    assert_equal "America/New_York", @games.venue_time_zone_id.first
-  end
+
 end
