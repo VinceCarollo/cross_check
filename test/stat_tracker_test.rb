@@ -64,11 +64,25 @@ class StatTrackerTest < Minitest::Test
     assert_equal 11, @stat_tracker.count_of_teams
   end
 
-  def test_best_offense
-    assert_equal "Lightning", @stat_tracker.best_offense
+  # def test_best_offense
+  #   assert_equal "Lightning", @stat_tracker.best_offense
+  # end
+
+  # def test_worst_offense
+  #   assert_equal "Sabres", @stat_tracker.worst_offense
+  # end
+
+  def test_team_info
+    expected = {
+              "abbreviation"=>"LAK",
+              "franchise_id"=>"14",
+              "link"=>"/api/v1/teams/26",
+              "short_name"=>"Los Angeles",
+              "team_id"=>"26",
+              "team_name"=>"Kings"
+            }
+    assert_equal expected, @stat_tracker.team_info("26")
   end
 
-  def test_worst_offense
-    assert_equal "Sabres", @stat_tracker.worst_offense
-  end
+
 end
