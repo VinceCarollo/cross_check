@@ -71,4 +71,12 @@ class StatTrackerTest < Minitest::Test
   def test_worst_offense
     assert_equal "Sabres", @stat_tracker.worst_offense
   end
+
+  def test_best_defense
+    assert_equal "Predators", @stat_tracker.best_defense
+  end
+
+  def test_worst_defense
+    assert_equal "Sharks", @stat_tracker.worst_defense
+  end
 end
