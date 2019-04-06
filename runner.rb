@@ -1,5 +1,5 @@
-require_relative './stat_tracker'
-require_relative './stat_tracker_initiator'
+require_relative './lib/stat_tracker'
+require_relative './lib/stat_tracker_initiator'
 
 stat_tracker = StatTrackerInitiator.create
 

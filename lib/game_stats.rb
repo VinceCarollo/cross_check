@@ -27,39 +27,40 @@ module GameStats
     goals.max
   end
 
-  def percentage_home_wins(home_team_id)
+  def percentage_home_wins
     games_played = 0
     games_won = 0
     self.games.each do |game|
-      if game.home_team_id == home_team_id
-        games_played += 1
-        games_won += 1 if game.outcome.include?("home")
+
+      games_played += 1
+      if game.outcome.include?("home") && game.outcome.include?("win")
+        games_won += 1
       end
     end
-    ((games_won.to_f / games_played) * 100).round(2)
+    (games_won.to_f / games_played).round(2)
   end
 
-  def percentage_visitor_wins(away_team_id)
+  def percentage_visitor_wins
     games_played = 0
     games_won = 0
     self.games.each do |game|
-      if game.away_team_id == away_team_id
-        games_played += 1
-        games_won += 1 if game.outcome.include?("away")
+
+      games_played += 1
+      if game.outcome.include?("away") && game.outcome.include?("win")
+        games_won += 1
       end
     end
-    ((games_won.to_f / games_played) * 100).round(2)
+    (games_won.to_f / games_played).round(2)
   end
 
-  def count_of_games_by_season(season)
-    result = {}
-    result[season] = 0
-    self.games.each do |game|
-      if game.season == season
-        result[season] += 1
-      end
+  def count_of_games_by_season
+    seasons = self.games.group_by do |game|
+      game.season
     end
-    result
+
+    seasons.transform_values do |games|
+      games.count
+    end
   end
 
   def average_goals_per_game
