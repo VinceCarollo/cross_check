@@ -79,4 +79,16 @@ class StatTrackerTest < Minitest::Test
   def test_worst_defense
     assert_equal "Sharks", @stat_tracker.worst_defense
   end
+
+  def test_winningest_team
+    assert_equal 'Bruins', @stat_tracker.winningest_team
+  end
+
+  def test_best_fans
+    assert_equal 'Bruins', @stat_tracker.best_fans
+  end
+
+  def test_worst_fans
+    assert_equal ["Blackhawks", "Sharks", "Kings", "Wild"], @stat_tracker.worst_fans
+  end
 end
