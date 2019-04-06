@@ -107,5 +107,14 @@ module TeamStats
     end.goals
   end
 
+  def fewest_goals_scored(team_id)
+    game_array = self.game_teams.find_all do |game|
+      game.team_id == team_id
+    end
+  game_array.min_by do |game|
+      game.goals
+    end.goals
+  end
+
 
 end

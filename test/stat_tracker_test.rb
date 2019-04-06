@@ -3,13 +3,13 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require 'pry'
 require './lib/stat_tracker'
-require './lib/stat_tracker_initiator'
+require './lib/stat_tracker_dummy_initiator'
 
 
 class StatTrackerTest < Minitest::Test
 
   def setup
-    @stat_tracker = StatTrackerInitiator.create
+    @stat_tracker = StatTrackerDummyInitiator.create
   end
 
   def test_stat_tracker_exists
@@ -97,7 +97,11 @@ class StatTrackerTest < Minitest::Test
   end
 
   def test_most_goals_scored
-    assert_equal 9, @stat_tracker.most_goals_scored("26")
+    assert_equal 2, @stat_tracker.most_goals_scored("26")
+  end
+
+  def test_fewest_goals_scored
+    assert_equal 1, @stat_tracker.fewest_goals_scored("26")
   end
 
 end
