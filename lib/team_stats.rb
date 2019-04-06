@@ -40,15 +40,45 @@ module TeamStats
        (games_won / games_played.to_f)
      end
 
-    best_season = best_game_id.max_by do |season, ratio|
+    b_season = best_game_id.max_by do |season, ratio|
       ratio
     end[0]
-    best_season
 
     final_return = self.games.find do |game|
-      game.season[0..3].include?(best_season)
+      game.season[0..3].include?(b_season)
     end.season
     final_return
   end
 
+  def worst_season(team_id)
+    team_id_array = self.game_teams.select do |game|
+      game.team_id == team_id
+    end
+
+    games_by_season = team_id_array.group_by do |game|
+        game.game_id[0..3]
+    end
+
+     games_played = 0
+     games_lost = 0
+     best_game_id = games_by_season.transform_values do |games|
+       games.each do |game|
+         games_played += 1
+         if game.won == "FALSE"
+           games_lost += 1
+         end
+       end
+       (games_lost / games_played.to_f)
+
+     end
+
+    w_season = best_game_id.max_by do |season, ratio|
+      ratio
+    end[0]
+
+    final_return = self.games.find do |game|
+      game.season[0..3].include?(w_season)
+    end.season
+    final_return
+  end
 end
