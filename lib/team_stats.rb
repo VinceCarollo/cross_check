@@ -81,4 +81,18 @@ module TeamStats
     end.season
     final_return
   end
+
+  def average_win_percentage(team_id)
+    games_played = 0
+    games_won = 0
+    self.game_teams.each do |game|
+      if game.team_id == team_id
+          games_played += 1
+        if game.won == "TRUE"
+          games_won += 1
+        end
+      end
+    end
+      (games_won / games_played.to_f).round(2)
+  end
 end
