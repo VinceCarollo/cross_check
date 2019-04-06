@@ -20,43 +20,35 @@ module TeamStats
   end
 
   def best_season(team_id)
-  #Season with the highest win percentage for a team.
-  #expecting an integer of the season
-
-  #game_teams has access to team ID and Wins. Game ID has first 4 numbers of season
-
-
-  #start with the team, group by game_id's
-    game_id_hash = self.game_teams.group_by do |game|
-      game.game_id
+    team_id_array = self.game_teams.select do |game|
+      game.team_id == team_id
     end
 
-
-  #find the game_ID with the most "WINS"
-    most_wins = game_id_hash.transform_values do |value|
-      value.map do |v|
-        v.won
-      end
+    games_by_season = team_id_array.group_by do |game|
+        game.game_id[0..3]
     end
 
-     most_wins #hash of game_id's with won outcome
-     best_game_id = most_wins.max_by do |key, value|
-       if value == "TRUE"
-         key
+     games_played = 0
+     games_won = 0
+     best_game_id = games_by_season.transform_values do |games|
+       games.each do |game|
+         games_played += 1
+         if game.won == "TRUE"
+           games_won += 1
+         end
        end
+       (games_won / games_played.to_f)
      end
 
-     binding.pry
-     converted = best_game_id[0].delete[-6..-1]
-#games has access to Season, and away or home id's
-     self.games.find do |game|
-       if game.season.include?(converted)
-       end
-     end
+    best_season = best_game_id.max_by do |season, ratio|
+      ratio
+    end[0]
+    best_season
 
-  #return the game_id and save into instance variable
-  #match the first four charaters of season with instance variable, return that season
-
+    final_return = self.games.find do |game|
+      game.season[0..3].include?(best_season)
+    end.season
+    final_return
   end
 
 end
