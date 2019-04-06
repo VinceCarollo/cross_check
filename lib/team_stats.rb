@@ -95,4 +95,17 @@ module TeamStats
     end
       (games_won / games_played.to_f).round(2)
   end
+
+  def most_goals_scored(team_id)
+    #Highest number of goals a particular team has scored in a single game.
+    game_array = self.game_teams.find_all do |game|
+      game.team_id == team_id
+    end
+
+  game_array.max_by do |game|
+      game.goals
+    end.goals
+  end
+
+
 end
