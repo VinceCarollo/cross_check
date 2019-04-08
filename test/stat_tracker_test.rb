@@ -4,6 +4,8 @@ require 'minitest/pride'
 require 'pry'
 require './lib/stat_tracker'
 require './lib/stat_tracker_dummy_initiator'
+require './lib/stat_tracker_initiator'
+
 
 
 class StatTrackerTest < Minitest::Test
@@ -64,12 +66,113 @@ class StatTrackerTest < Minitest::Test
     assert_equal 11, @stat_tracker.count_of_teams
   end
 
-  def test_best_offense
-    assert_equal "Lightning", @stat_tracker.best_offense
+  def test_team_info
+    expected = {
+              "abbreviation"=>"LAK",
+              "franchise_id"=>"14",
+              "link"=>"/api/v1/teams/26",
+              "short_name"=>"Los Angeles",
+              "team_id"=>"26",
+              "team_name"=>"Kings"
+            }
+    assert_equal expected, @stat_tracker.team_info("26")
   end
 
-  def test_worst_offense
-    assert_equal "Sabres", @stat_tracker.worst_offense
+  def test_best_season
+    assert_equal "20152016", @stat_tracker.best_season("26")
+  end
+
+  def test_worst_season
+    assert_equal "20122013", @stat_tracker.worst_season("3")
+  end
+
+  def test_average_win_percentage
+    assert_equal 0.5, @stat_tracker.average_win_percentage("26")
+  end
+
+  def test_most_goals_scored
+    assert_equal 2, @stat_tracker.most_goals_scored("26")
+  end
+
+  def test_fewest_goals_scored
+    assert_equal 1, @stat_tracker.fewest_goals_scored("26")
+  end
+
+  def test_favorite_opponent
+    assert_equal 'Capitals', @stat_tracker.favorite_opponent("5")
+  end
+
+  def test_rival
+    assert_equal 'Lightning', @stat_tracker.rival("5")
+  end
+
+  def test_biggest_team_blowout
+    assert_equal 3, @stat_tracker.biggest_team_blowout("5")
+  end
+
+  def test_worst_loss
+    assert_equal 1, @stat_tracker.worst_loss("5")
+  end
+
+  def test_find_team_name
+    assert_equal 'Penguins', @stat_tracker.find_team_name("5")
+  end
+
+  def test_head_to_head
+    expected = {
+              "Lightning"=>0.67,
+              "Capitals"=>1.0
+              }
+    assert_equal expected, @stat_tracker.head_to_head("5")
+  end
+
+  def test_seasonal_summary
+    expected = {
+      "20122013"=>
+      {:regular_season=>
+        {:win_percentage=>1.0,
+         :total_goals_scored=>2,
+         :total_goals_against=>1,
+         :average_goals_scored=>2.0,
+         :average_goals_against=>1.0},
+       :postseason=>
+        {:win_percentage=>0,
+         :total_goals_scored=>0,
+         :total_goals_against=>0,
+         :average_goals_scored=>0,
+         :average_goals_against=>0}},
+      "20152016"=>
+      {:regular_season=>
+          {:win_percentage=>1.0,
+           :total_goals_scored=>5,
+           :total_goals_against=>3,
+           :average_goals_scored=>5.0,
+           :average_goals_against=>3.0},
+       :postseason=>
+          {:win_percentage=>0,
+           :total_goals_scored=>0,
+           :total_goals_against=>0,
+           :average_goals_scored=>0,
+           :average_goals_against=>0}},
+        "20172018"=>
+        {:regular_season=>
+          {:win_percentage=>1.0,
+           :total_goals_scored=>3,
+           :total_goals_against=>0,
+           :average_goals_scored=>3.0,
+           :average_goals_against=>0.0},
+         :postseason=>
+          {:win_percentage=>0,
+           :total_goals_scored=>0,
+           :total_goals_against=>0,
+           :average_goals_scored=>0,
+           :average_goals_against=>0
+          }
+        }
+      }
+
+
+    assert_equal expected, @stat_tracker.seasonal_summary("18")
   end
 
   def test_best_defense
