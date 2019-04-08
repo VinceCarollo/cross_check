@@ -3,11 +3,13 @@ require_relative './breakdown'
 require_relative './game_stats'
 require_relative './league_stats'
 require_relative './team_stats'
+require_relative './season_stats'
 
 class StatTracker
-  include GameStats
-  include LeagueStats
-  include TeamStats
+  include GameStats,
+          LeagueStats,
+          TeamStats,
+          SeasonStats
 
   attr_reader :games,
               :teams,

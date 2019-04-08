@@ -229,4 +229,10 @@ class StatTrackerTest < Minitest::Test
 
     assert_equal 'Sabres', stat_tracker.lowest_scoring_home_team
   end
+
+  def test_biggest_bust
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 'Golden Knights', stat_tracker.biggest_bust("20122013")
+  end
 end
