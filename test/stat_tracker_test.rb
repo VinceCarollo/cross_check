@@ -11,7 +11,7 @@ require './lib/stat_tracker_initiator'
 class StatTrackerTest < Minitest::Test
 
   def setup
-    @stat_tracker = StatTrackerDummyInitiator.create
+    @stat_tracker = StatTrackerInitiator.create
   end
 
   def test_stat_tracker_exists
@@ -124,5 +124,44 @@ class StatTrackerTest < Minitest::Test
               "Capitals"=>1.0
               }
     assert_equal expected, @stat_tracker.head_to_head("5")
+  end
+
+  def test_seasonal_summary
+    expected = {
+      "20162017" => {
+        postseason: {
+          :win_percentage=>0.64,
+          :total_goals_scored=>60,
+          :total_goals_against=>48,
+          :average_goals_scored=>2.73,
+          :average_goals_against=>2.18},
+          :regular_season => {
+            :win_percentage=>0.5,
+            :total_goals_scored=>240,
+            :total_goals_against=>224,
+            :average_goals_scored=>2.93,
+            :average_goals_against=>2.73
+          }
+        },
+        "20172018" => {
+          postseason: {
+            :win_percentage=>0.54,
+            :total_goals_scored=>41,
+            :total_goals_against=>42,
+            :average_goals_scored=>3.15,
+            :average_goals_against=>3.23
+          },
+          :regular_season=>
+          {:win_percentage=>0.65,
+            :total_goals_scored=>267,
+            :total_goals_against=>211,
+            :average_goals_scored=>3.26,
+            :average_goals_against=>2.57
+          }
+        }
+      }
+
+
+    assert_equal expected, @stat_tracker.seasonal_summary("5")
   end
 end
