@@ -168,7 +168,7 @@ module TeamStats
 
     away_played_against = away_played.group_by{|game| game.away_team_id}
     home_played_against = home_played.group_by{|game| game.home_team_id}
-    # binding.pry
+
     teams_played_against = away_played_against.merge(home_played_against){|k, n, o| n + o}
     ratios = {}
     teams_played_against.each do |game_team_id, games|
@@ -255,5 +255,65 @@ module TeamStats
       opponent_games.delete(game_team_id)
     end
     opponent_games
+  end
+
+  # For each season that the team has played,
+  # a hash that has two keys (:regular_season and :postseason),
+  # that each point to a hash with the following keys:
+  # :win_percentage, :total_goals_scored, :total_goals_against,
+  # :average_goals_scored, :average_goals_against.
+  def seasonal_summary(team_id)
+    # Grab only team wanted games into array
+    # group by season
+    # gather season info and save
+    # put info into expected hash
+    total_games_played = self.games.find_all do |game|
+      if game.away_team_id == team_id
+        game.away_team_id
+      elsif game.home_team_id == team_id
+        game.home_team_id
+      end
+    end
+
+    seasons_played = total_games_played.group_by{|game| game.season}
+
+    seasons_played.transform_values! do |games|
+      games.group_by do |game|
+        game.type
+      end
+    end
+    seasons_played.values.each do |seasons|
+      seasons.keys.each do |game_type|
+        if game_type == 'P'
+          seasons[:postseason] = seasons[game_type]
+          seasons.delete(game_type)
+        else
+          seasons[:regular_season] = seasons[game_type]
+          seasons.delete(game_type)
+        end
+      end
+    end
+
+    seasons_played.values.each do |games|
+      games.transform_values! do |season|
+        win_percentage = 0
+        games_won = 0
+        games_played = 0
+        total_goals_scored = 0
+        total_goals_against = 0
+        average_goals_scored = 0
+        average_goals_against = 0
+        season.each do |game|
+        end
+        {
+          :win_percentage => 0,
+          :total_goals_scored => 0,
+          :total_goals_against => 0,
+          :average_goals_scored => 0,
+          :average_goals_against => 0
+        }
+      end
+    end
+    seasons_played
   end
 end
