@@ -1,6 +1,7 @@
 require './test/test_helper'
 require 'minitest/autorun'
 require 'minitest/pride'
+require 'mocha/minitest'
 require 'pry'
 require './lib/stat_tracker'
 require './lib/stat_tracker_dummy_initiator'
@@ -111,7 +112,9 @@ class StatTrackerTest < Minitest::Test
   end
 
   def test_worst_loss
-    assert_equal 1, @stat_tracker.worst_loss("5")
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 9, stat_tracker.worst_loss("5")
   end
 
   def test_find_team_name
@@ -193,5 +196,37 @@ class StatTrackerTest < Minitest::Test
 
   def test_worst_fans
     assert_equal ["Blackhawks", "Sharks", "Kings", "Wild"], @stat_tracker.worst_fans
+  end
+
+  def test_best_offense
+    assert_equal 'Lightning', @stat_tracker.best_offense
+  end
+
+  def test_worst_offense
+    assert_equal 'Sabres', @stat_tracker.worst_offense
+  end
+
+  def test_highest_scoring_visitor
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 'Capitals', stat_tracker.highest_scoring_visitor
+  end
+
+  def test_highest_scoring_home_team
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 'Golden Knights', stat_tracker.highest_scoring_home_team
+  end
+
+  def test_lowest_scoring_visitor
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 'Sabres', stat_tracker.lowest_scoring_visitor
+  end
+
+  def test_lowest_scoring_home_team
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 'Sabres', stat_tracker.lowest_scoring_home_team
   end
 end
