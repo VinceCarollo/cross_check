@@ -257,16 +257,8 @@ module TeamStats
     opponent_games
   end
 
-  # For each season that the team has played,
-  # a hash that has two keys (:regular_season and :postseason),
-  # that each point to a hash with the following keys:
-  # :win_percentage, :total_goals_scored, :total_goals_against,
-  # :average_goals_scored, :average_goals_against.
   def seasonal_summary(team_id)
-    # Grab only team wanted games into array
-    # group by season
-    # gather season info and save
-    # put info into expected hash
+    #grabs only games played by given team
     total_games_played = self.games.find_all do |game|
       if game.away_team_id == team_id
         game.away_team_id
@@ -277,11 +269,21 @@ module TeamStats
 
     seasons_played = total_games_played.group_by{|game| game.season}
 
+    #creates hash: keys: season, values: hash: keys: game type values: games
     seasons_played.transform_values! do |games|
       games.group_by do |game|
         game.type
       end
     end
+
+    #creates empty postseasons if not played by team
+    seasons_played.each do |season, grouped|
+      if grouped.keys.length != 2
+        seasons_played[season]['P'] = []
+      end
+    end
+
+    #changes 'P' and 'R' keys to symbols
     seasons_played.values.each do |seasons|
       seasons.keys.each do |game_type|
         if game_type == 'P'
@@ -296,22 +298,40 @@ module TeamStats
 
     seasons_played.values.each do |games|
       games.transform_values! do |season|
-        win_percentage = 0
         games_won = 0
         games_played = 0
         total_goals_scored = 0
         total_goals_against = 0
-        average_goals_scored = 0
-        average_goals_against = 0
         season.each do |game|
+          games_played += 1
+          if game.home_team_id == team_id
+            games_won += 1 if game.outcome.include?('home') && game.outcome.include?('win')
+            total_goals_scored += game.home_goals
+            total_goals_against += game.away_goals
+          elsif game.away_team_id == team_id
+            games_won += 1 if game.outcome.include?('away') && game.outcome.include?('win')
+            total_goals_scored += game.away_goals
+            total_goals_against += game.home_goals
+          end
         end
         {
-          :win_percentage => 0,
-          :total_goals_scored => 0,
-          :total_goals_against => 0,
-          :average_goals_scored => 0,
-          :average_goals_against => 0
+          :win_percentage => (games_won / games_played.to_f).round(2),
+          :total_goals_scored => total_goals_scored,
+          :total_goals_against => total_goals_against,
+          :average_goals_scored => (total_goals_scored / games_played.to_f).round(2),
+          :average_goals_against => (total_goals_against / games_played.to_f).round(2)
         }
+      end
+    end
+
+    #changes NaN values to 0
+    seasons_played.each do |season, grouped|
+      grouped.each do |type, stats|
+        stats.each do |stat, value|
+          if value.to_f.nan?
+            seasons_played[season][type][stat] = 0
+          end
+        end
       end
     end
     seasons_played
