@@ -98,34 +98,27 @@ module SeasonStats
   end
 
   def winningest_coach(season_id)
-    teams = ids_with_game_arrays_by_season(season_id)
-    teams.each do |team_id, games|
-      if games.length == 0
-        teams.delete(team_id)
-      end
+    season_game = self.game_teams.find_all do |game|
+      game.game_id[0..3].include?(season_id[0..3])
     end
 
-    teams.each do |team_id, games|
-      season_games = 0
-      season_wins = 0
-      games.each do |game|
-        season_games += 1
-        if game.home_team_id == team_id && game.outcome.include?("home")
-          season_wins += 1
-        elsif game.away_team_id == team_id && game.outcome.include?("away")
-          season_wins += 1
-        end
-      end
-      teams[team_id] = (season_wins/season_games.to_f)
+    head_coaches = season_game.group_by do |game|
+      game.head_coach
     end
 
-    best_team = teams.max_by do |team_id, ratio|
+    head_coaches.transform_values! do |games|
+      total_games = 0
+      coach_wins = games.count do |game|
+        total_games += 1
+        game.won == "TRUE"
+      end
+      coach_wins/total_games.to_f
+    end
+
+    youre_the_best = head_coaches.max_by do |coach, ratio|
       ratio
     end.first
-
-    self.game_teams.find do |game|
-      game.game_id[0..3] == season_id[0..3] && game.team_id == best_team
-    end.head_coach
+    youre_the_best
   end
 
   def worst_coach(season_id)
