@@ -39,7 +39,6 @@ module TeamStats
       end
       (games_won / games_played.to_f)
     end
-
     b_season = best_game_id.max_by do |season, ratio|
       ratio
     end[0]
@@ -74,7 +73,6 @@ module TeamStats
     w_season = worst_game_id.max_by do |season, ratio|
       ratio
     end[0]
-
     final_return = self.games.find do |game|
       game.season[0..3].include?(w_season)
     end.season
