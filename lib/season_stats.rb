@@ -203,5 +203,33 @@ module SeasonStats
     team_name
   end
 
+  def most_hits(season_id)
+    games_by_season = self.game_teams.find_all do |game|
+      game.game_id[0..3] == season_id[0..3]
+    end
+
+    games_by_team_id = games_by_season.group_by do |game|
+      game.team_id
+    end
+
+    games_by_team_id.transform_values!.each do |games_array|
+      game_hits_total = 0
+      games_array.each do |game|
+        game_hits_total += game.hits
+      end
+      game_hits_total
+    end
+
+    highest_hitting_team_id = games_by_team_id.max_by do |team_id, total_hits|
+      total_hits
+    end.first
+
+    team_name = self.teams.find do |team|
+      team.team_id == highest_hitting_team_id
+    end.team_name
+    team_name
+  end
+
+
 
 end
