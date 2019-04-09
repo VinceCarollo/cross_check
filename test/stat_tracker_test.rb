@@ -275,4 +275,10 @@ class StatTrackerTest < Minitest::Test
 
     assert_equal "Islanders", stat_tracker.most_hits("20142015")
   end
+
+  def test_fewest_hits
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Wild", stat_tracker.fewest_hits("20142015")
+  end
 end
