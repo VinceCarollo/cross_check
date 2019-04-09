@@ -236,7 +236,7 @@ class StatTrackerTest < Minitest::Test
     assert_equal 'Canucks', stat_tracker.biggest_bust("20122013")
   end
 
-  def test_biggest_surpise
+  def test_biggest_surprise
     stat_tracker = StatTrackerInitiator.create
 
     assert_equal 'Sharks' , stat_tracker.biggest_surprise("20122013")
@@ -256,5 +256,11 @@ class StatTrackerTest < Minitest::Test
     stat_tracker = StatTrackerInitiator.create
 
     assert_equal "Martin Raymond", stat_tracker.worst_coach("20122013")
+  end
+
+  def test_most_accurate_team
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Lightning", stat_tracker.most_accurate_team("20122013")
   end
 end
