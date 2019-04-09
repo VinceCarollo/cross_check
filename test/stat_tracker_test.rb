@@ -263,4 +263,10 @@ class StatTrackerTest < Minitest::Test
 
     assert_equal "Lightning", stat_tracker.most_accurate_team("20122013")
   end
+
+  def test_least_accurate_team
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Senators", stat_tracker.least_accurate_team("20122013")
+  end
 end
