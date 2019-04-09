@@ -241,4 +241,14 @@ class StatTrackerTest < Minitest::Test
 
     assert_equal 'Sharks' , stat_tracker.biggest_surprise("20122013")
   end
+
+  def test_ids_with_game_arrays_by_season
+    assert_equal 20, @stat_tracker.ids_with_game_arrays_by_season("20122013").length
+  end
+
+  def test_winningest_coach
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Joel Quenneville", stat_tracker.winningest_coach("20122013")
+  end
 end
