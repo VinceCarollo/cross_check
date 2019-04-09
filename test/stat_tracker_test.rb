@@ -233,6 +233,12 @@ class StatTrackerTest < Minitest::Test
   def test_biggest_bust
     stat_tracker = StatTrackerInitiator.create
 
-    assert_equal 'Golden Knights', stat_tracker.biggest_bust("20122013")
+    assert_equal 'Canucks', stat_tracker.biggest_bust("20122013")
+  end
+
+  def test_biggest_surpise
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 'Sharks' , stat_tracker.biggest_surprise("20122013")
   end
 end
