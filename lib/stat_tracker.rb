@@ -22,9 +22,9 @@ class StatTracker
   end
 
   def self.from_csv(locations)
-    games = {}
-    teams = {}
-    game_teams = {}
+    games = []
+    teams = []
+    game_teams = []
 
     locations.each do |name, path|
       if name == :games
