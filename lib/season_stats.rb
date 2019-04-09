@@ -105,9 +105,6 @@ module SeasonStats
       end
     end
 
-    #Game CSV has season, team ids (split home/away), game_id
-    #Game Team CSV has team_id and head coach names
-
     teams.each do |team_id, games|
       season_games = 0
       season_wins = 0
@@ -129,6 +126,29 @@ module SeasonStats
     self.game_teams.find do |game|
       game.game_id[0..3] == season_id[0..3] && game.team_id == best_team
     end.head_coach
+  end
 
+  def worst_coach(season_id)
+    season_game = self.game_teams.find_all do |game|
+      game.game_id[0..3].include?(season_id[0..3])
+    end
+
+    head_coaches = season_game.group_by do |game|
+      game.head_coach
+    end
+
+    head_coaches.transform_values! do |games|
+      total_games = 0
+      coach_losses = games.count do |game|
+        total_games += 1
+        game.won == "FALSE"
+      end
+      coach_losses/total_games.to_f
+    end
+
+    youre_the_worst = head_coaches.max_by do |coach, ratio|
+      ratio
+    end.first
+    youre_the_worst
   end
 end
