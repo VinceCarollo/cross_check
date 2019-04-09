@@ -249,7 +249,7 @@ class StatTrackerTest < Minitest::Test
   def test_winningest_coach
     stat_tracker = StatTrackerInitiator.create
 
-    assert_equal "Joel Quenneville", stat_tracker.winningest_coach("20122013")
+    assert_equal "Dan Lacroix", stat_tracker.winningest_coach("20122013")
   end
 
   def test_worst_coach
