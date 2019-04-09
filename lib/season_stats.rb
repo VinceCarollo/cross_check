@@ -144,4 +144,35 @@ module SeasonStats
     end.first
     youre_the_worst
   end
+
+  def most_accurate_team(season_id)
+    games_by_season = self.game_teams.find_all do |game|
+      game.game_id[0..3] == season_id[0..3]
+    end
+
+    games_by_team_id = games_by_season.group_by do |game|
+      game.team_id
+    end
+
+    games_by_team_id.transform_values! do |games|
+      total_goals = 0
+      total_shots = 0
+      games.each do |game|
+        total_goals += game.goals
+        total_shots += game.shots
+      end
+      total_goals/total_shots.to_f
+    end
+
+    most_accurate = games_by_team_id.max_by do |team_id, ratio|
+      ratio
+    end.first
+
+    team_name = self.teams.find do |team|
+      team.team_id == most_accurate
+    end.team_name
+    team_name
+  end
+
+
 end
