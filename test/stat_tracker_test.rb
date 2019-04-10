@@ -84,7 +84,9 @@ class StatTrackerTest < Minitest::Test
   end
 
   def test_worst_season
-    assert_equal "20122013", @stat_tracker.worst_season("3")
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "20172018", stat_tracker.worst_season("3")
   end
 
   def test_average_win_percentage
@@ -228,5 +230,63 @@ class StatTrackerTest < Minitest::Test
     stat_tracker = StatTrackerInitiator.create
 
     assert_equal 'Sabres', stat_tracker.lowest_scoring_home_team
+  end
+
+  def test_biggest_bust
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 'Canucks', stat_tracker.biggest_bust("20122013")
+  end
+
+  def test_biggest_surprise
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 'Sharks' , stat_tracker.biggest_surprise("20122013")
+  end
+
+  def test_ids_with_game_arrays_by_season
+    assert_equal 20, @stat_tracker.ids_with_game_arrays_by_season("20122013").length
+  end
+
+  def test_winningest_coach
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Dan Lacroix", stat_tracker.winningest_coach("20122013")
+  end
+
+  def test_worst_coach
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Martin Raymond", stat_tracker.worst_coach("20122013")
+  end
+
+  def test_most_accurate_team
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Lightning", stat_tracker.most_accurate_team("20122013")
+  end
+
+  def test_least_accurate_team
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Senators", stat_tracker.least_accurate_team("20122013")
+  end
+
+  def test_most_hits
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Islanders", stat_tracker.most_hits("20142015")
+  end
+
+  def test_fewest_hits
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "Wild", stat_tracker.fewest_hits("20142015")
+  end
+
+  def test_power_pay_goal_percentage
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 0.22, stat_tracker.power_play_goal_percentage("20132014")
   end
 end
