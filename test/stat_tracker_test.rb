@@ -281,4 +281,10 @@ class StatTrackerTest < Minitest::Test
 
     assert_equal "Wild", stat_tracker.fewest_hits("20142015")
   end
+
+  def test_power_pay_goal_percentage
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal 0.22, stat_tracker.power_play_goal_percentage("20132014")
+  end
 end
