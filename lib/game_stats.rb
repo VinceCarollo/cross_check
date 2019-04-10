@@ -33,7 +33,7 @@ module GameStats
     self.games.each do |game|
 
       games_played += 1
-      if game.outcome.include?("home") && game.outcome.include?("win")
+      if game.outcome.include?("home")
         games_won += 1
       end
     end
@@ -44,23 +44,15 @@ module GameStats
     games_played = 0
     games_won = 0
     self.games.each do |game|
-
       games_played += 1
-      if game.outcome.include?("away") && game.outcome.include?("win")
-        games_won += 1
-      end
+      games_won += 1 if game.outcome.include?("away")
     end
     (games_won.to_f / games_played).round(2)
   end
 
   def count_of_games_by_season
-    seasons = self.games.group_by do |game|
-      game.season
-    end
-
-    seasons.transform_values do |games|
-      games.count
-    end
+    seasons = self.games.group_by{|game| game.season}
+    seasons.transform_values{|games| games.count}
   end
 
   def average_goals_per_game
@@ -73,17 +65,12 @@ module GameStats
   end
 
   def average_goals_by_season
-
-    games_by_season = self.games.group_by do |game|
-       game.season
-    end
+    games_by_season = self.games.group_by{|game| game.season}
 
     games_by_season.transform_values do |games_per_season|
-      total_goals = games_per_season.sum do |game|
-        game.home_goals + game.away_goals.to_f
-      end
+      total_goals = games_per_season.sum{|game| game.home_goals + game.away_goals.to_f}
       (total_goals / games_per_season.length).round(2)
     end
   end
-
+  
 end
