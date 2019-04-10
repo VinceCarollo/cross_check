@@ -50,33 +50,34 @@ module TeamStats
   end
 
   def worst_season(team_id)
-    team_id_array = self.game_teams.select do |game|
+    games_played = self.game_teams.find_all do |game|
       game.team_id == team_id
     end
 
-    games_by_season = team_id_array.group_by do |game|
-        game.game_id[0..3]
+    games_by_season = games_played.group_by do |game|
+      game.game_id[0..3]
     end
 
-    games_played = 0
-    games_lost = 0
-    worst_game_id = games_by_season.transform_values do |games|
+    games_by_season.transform_values! do |games|
+      total_games = 0
+      games_lost = 0
       games.each do |game|
-        games_played += 1
+        total_games += 1
         if game.won == "FALSE"
           games_lost += 1
         end
       end
-      (games_lost / games_played.to_f)
+      (games_lost / total_games.to_f)
     end
 
-    w_season = worst_game_id.max_by do |season, ratio|
+    worst_season = games_by_season.max_by do |season, ratio|
       ratio
-    end[0]
-    final_return = self.games.find do |game|
-      game.season[0..3].include?(w_season)
+    end.first
+
+    worst_season_id = self.games.find do |game|
+      game.season[0..3] == worst_season
     end.season
-    final_return
+    worst_season_id
   end
 
   def average_win_percentage(team_id)

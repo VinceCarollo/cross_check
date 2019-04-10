@@ -84,7 +84,9 @@ class StatTrackerTest < Minitest::Test
   end
 
   def test_worst_season
-    assert_equal "20122013", @stat_tracker.worst_season("3")
+    stat_tracker = StatTrackerInitiator.create
+
+    assert_equal "20172018", stat_tracker.worst_season("3")
   end
 
   def test_average_win_percentage
