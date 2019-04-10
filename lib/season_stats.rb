@@ -17,9 +17,7 @@ module SeasonStats
   teams = ids_with_game_arrays_by_season(season_id)
 
     teams.transform_values! do |games|
-      games.group_by do |game|
-        game.type
-      end
+      games.group_by{|game| game.type}
     end
 
     teams.each do |team_id, games_by_type|
@@ -37,11 +35,13 @@ module SeasonStats
        (games_won / games_played.to_f)
       end
     end
+
     teams.each do |team_id, ratio_types|
       if ratio_types.empty?
         teams.delete(team_id)
       end
     end
+
     teams.transform_values! do |ratio_types|
       if ratio_types.keys.length == 2
         ratio_types["P"] - ratio_types["R"]
@@ -49,19 +49,14 @@ module SeasonStats
         0
       end
     end
-    duh_sabres = teams.min_by do |team_id, ratio|
-      ratio
-    end
-    find_team_name(duh_sabres[0])
+
+    biggest_bust_id = teams.min_by{|team_id, ratio| ratio}[0]
+    find_team_name(biggest_bust_id)
   end
 
   def biggest_surprise(season_id)
     teams = ids_with_game_arrays_by_season(season_id)
-    teams.transform_values! do |games|
-      games.group_by do |game|
-        game.type
-      end
-    end
+    teams.transform_values!{|games| games.group_by{|game| game.type}}
 
     teams.each do |team_id, games_by_type|
       games_by_type.transform_values! do |games|
@@ -78,11 +73,13 @@ module SeasonStats
        (games_won / games_played.to_f)
       end
     end
+
     teams.each do |team_id, ratio_types|
       if ratio_types.empty?
         teams.delete(team_id)
       end
     end
+
     teams.transform_values! do |ratio_types|
       if ratio_types.keys.length == 2
         ratio_types["P"] - ratio_types["R"]
@@ -90,11 +87,9 @@ module SeasonStats
         0
       end
     end
-    duh_sabres = teams.max_by do |team_id, ratio|
-      ratio
-    end
 
-    find_team_name(duh_sabres[0])
+    biggest_surprise_id = teams.max_by{|team_id, ratio| ratio}[0]
+    find_team_name(biggest_surprise_id)
   end
 
   def winningest_coach(season_id)
@@ -102,23 +97,17 @@ module SeasonStats
       game.game_id[0..3].include?(season_id[0..3])
     end
 
-    head_coaches = season_game.group_by do |game|
-      game.head_coach
-    end
-
+    head_coaches = season_game.group_by{|game| game.head_coach}
     head_coaches.transform_values! do |games|
       total_games = 0
       coach_wins = games.count do |game|
         total_games += 1
         game.won == "TRUE"
       end
-      coach_wins/total_games.to_f
+      coach_wins / total_games.to_f
     end
 
-    youre_the_best = head_coaches.max_by do |coach, ratio|
-      ratio
-    end.first
-    youre_the_best
+    head_coaches.max_by{|coach, ratio| ratio}.first
   end
 
   def worst_coach(season_id)
@@ -126,23 +115,17 @@ module SeasonStats
       game.game_id[0..3].include?(season_id[0..3])
     end
 
-    head_coaches = season_game.group_by do |game|
-      game.head_coach
-    end
-
+    head_coaches = season_game.group_by{|game| game.head_coach}
     head_coaches.transform_values! do |games|
       total_games = 0
       coach_losses = games.count do |game|
         total_games += 1
         game.won == "FALSE"
       end
-      coach_losses/total_games.to_f
+      coach_losses / total_games.to_f
     end
 
-    youre_the_worst = head_coaches.max_by do |coach, ratio|
-      ratio
-    end.first
-    youre_the_worst
+    head_coaches.max_by{|coach, ratio| ratio}.first
   end
 
   def most_accurate_team(season_id)
@@ -150,9 +133,7 @@ module SeasonStats
       game.game_id[0..3] == season_id[0..3]
     end
 
-    games_by_team_id = games_by_season.group_by do |game|
-      game.team_id
-    end
+    games_by_team_id = games_by_season.group_by{|game| game.team_id}
 
     games_by_team_id.transform_values! do |games|
       total_goals = 0
@@ -161,17 +142,11 @@ module SeasonStats
         total_goals += game.goals
         total_shots += game.shots
       end
-      total_goals/total_shots.to_f
+      total_goals / total_shots.to_f
     end
 
-    most_accurate = games_by_team_id.max_by do |team_id, ratio|
-      ratio
-    end.first
-
-    team_name = self.teams.find do |team|
-      team.team_id == most_accurate
-    end.team_name
-    team_name
+    most_accurate = games_by_team_id.max_by{|team_id, ratio| ratio}.first
+    find_team_name(most_accurate)
   end
 
   def least_accurate_team(season_id)
@@ -179,9 +154,7 @@ module SeasonStats
       game.game_id[0..3] == season_id[0..3]
     end
 
-    games_by_team_id = games_by_season.group_by do |game|
-      game.team_id
-    end
+    games_by_team_id = games_by_season.group_by{|game| game.team_id}
 
     games_by_team_id.transform_values! do |games|
       total_goals = 0
@@ -190,17 +163,11 @@ module SeasonStats
         total_goals += game.goals
         total_shots += game.shots
       end
-      total_goals/total_shots.to_f
+      total_goals / total_shots.to_f
     end
 
-    most_accurate = games_by_team_id.min_by do |team_id, ratio|
-      ratio
-    end.first
-
-    team_name = self.teams.find do |team|
-      team.team_id == most_accurate
-    end.team_name
-    team_name
+    most_accurate = games_by_team_id.min_by{|team_id, ratio| ratio}.first
+    find_team_name(most_accurate)
   end
 
   def most_hits(season_id)
@@ -208,9 +175,7 @@ module SeasonStats
       game.game_id[0..3] == season_id[0..3]
     end
 
-    games_by_team_id = games_by_season.group_by do |game|
-      game.team_id
-    end
+    games_by_team_id = games_by_season.group_by{|game| game.team_id}
 
     games_by_team_id.transform_values!.each do |games_array|
       game_hits_total = 0
@@ -224,10 +189,7 @@ module SeasonStats
       total_hits
     end.first
 
-    team_name = self.teams.find do |team|
-      team.team_id == highest_hitting_team_id
-    end.team_name
-    team_name
+    find_team_name(highest_hitting_team_id)
   end
 
   def fewest_hits(season_id)
@@ -235,9 +197,7 @@ module SeasonStats
       game.game_id[0..3] == season_id[0..3]
     end
 
-    games_by_team_id = games_by_season.group_by do |game|
-      game.team_id
-    end
+    games_by_team_id = games_by_season.group_by{|game| game.team_id}
 
     games_by_team_id.transform_values!.each do |games_array|
       game_hits_total = 0
@@ -251,10 +211,7 @@ module SeasonStats
       total_hits
     end.first
 
-    team_name = self.teams.find do |team|
-      team.team_id == highest_hitting_team_id
-    end.team_name
-    team_name
+    find_team_name(highest_hitting_team_id)
   end
 
   def power_play_goal_percentage(season_id)
@@ -264,14 +221,12 @@ module SeasonStats
 
     total_goals = 0
     power_play_goals = 0
-    percentage = season_games.each do |games|
+    season_games.each do |games|
       power_play_goals += games.power_play_goals
       total_goals += games.goals
     end
-    
-    power_percentage = (power_play_goals/total_goals.to_f).round(2)
 
-    power_percentage
+    (power_play_goals/total_goals.to_f).round(2)
   end
 
 end

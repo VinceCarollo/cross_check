@@ -2,10 +2,10 @@ require 'pry'
 
 module TeamStats
 
-  def team_info(num_arg)
+  def team_info(team_id)
     info = {}
     self.teams.each do |team|
-      if team.team_id == num_arg
+      if team.team_id == team_id
         info = {
           "abbreviation" => team.abbreviation,
           "franchise_id" => team.franchise_id,
@@ -20,64 +20,39 @@ module TeamStats
   end
 
   def best_season(team_id)
-    team_id_array = self.game_teams.select do |game|
-      game.team_id == team_id
-    end
+    team_id_array = self.game_teams.select{|game| game.team_id == team_id}
+    games_by_season = team_id_array.group_by{|game| game.game_id[0..3]}
 
-    games_by_season = team_id_array.group_by do |game|
-      game.game_id[0..3]
-    end
-
-    games_played = 0
-    games_won = 0
     best_game_id = games_by_season.transform_values do |games|
+      games_played = 0
+      games_won = 0
       games.each do |game|
         games_played += 1
-        if game.won == "TRUE"
-          games_won += 1
-        end
+        games_won += 1 if game.won == "TRUE"
       end
       (games_won / games_played.to_f)
     end
-    b_season = best_game_id.max_by do |season, ratio|
-      ratio
-    end[0]
 
-    final_return = self.games.find do |game|
-      game.season[0..3].include?(b_season)
-    end.season
-    final_return
+    best_season = best_game_id.max_by{|season, ratio| ratio}[0]
+    self.games.find{|game| game.season[0..3].include?(best_season)}.season
   end
 
   def worst_season(team_id)
-    games_played = self.game_teams.find_all do |game|
-      game.team_id == team_id
-    end
-
-    games_by_season = games_played.group_by do |game|
-      game.game_id[0..3]
-    end
+    games_played = self.game_teams.find_all{|game| game.team_id == team_id}
+    games_by_season = games_played.group_by{|game| game.game_id[0..3]}
 
     games_by_season.transform_values! do |games|
       total_games = 0
       games_lost = 0
       games.each do |game|
         total_games += 1
-        if game.won == "FALSE"
-          games_lost += 1
-        end
+        games_lost += 1 if game.won == "FALSE"
       end
       (games_lost / total_games.to_f)
     end
 
-    worst_season = games_by_season.max_by do |season, ratio|
-      ratio
-    end.first
-
-    worst_season_id = self.games.find do |game|
-      game.season[0..3] == worst_season
-    end.season
-    worst_season_id
+    worst_season = games_by_season.max_by{|season, ratio| ratio}.first
+    self.games.find{|game| game.season[0..3] == worst_season}.season
   end
 
   def average_win_percentage(team_id)
@@ -85,47 +60,38 @@ module TeamStats
     games_won = 0
     self.game_teams.each do |game|
       if game.team_id == team_id
-          games_played += 1
-        if game.won == "TRUE"
-          games_won += 1
-        end
+        games_played += 1
+        games_won += 1 if game.won == "TRUE"
       end
     end
-      (games_won / games_played.to_f).round(2)
+
+    (games_won / games_played.to_f).round(2)
   end
 
   def most_goals_scored(team_id)
     game_array = self.game_teams.find_all do |game|
       game.team_id == team_id
     end
-
-    game_array.max_by do |game|
-      game.goals
-    end.goals
+    game_array.max_by{|game| game.goals}.goals
   end
 
   def fewest_goals_scored(team_id)
     game_array = self.game_teams.find_all do |game|
       game.team_id == team_id
     end
-    game_array.min_by do |game|
-      game.goals
-    end.goals
+    game_array.min_by{|game| game.goals}.goals
   end
 
   def favorite_opponent(team_id)
     games_played = self.games.find_all do |game|
       game.away_team_id == team_id || game.home_team_id == team_id
     end
+
     away_played = []
     home_played = []
-
     games_played.each do |game|
-      if game.home_team_id == team_id
-        away_played << game
-      else
-        home_played << game
-      end
+      away_played << game if game.home_team_id == team_id
+      home_played << game if game.away_team_id == team_id
     end
 
     away_played_against = away_played.group_by{|game| game.away_team_id}
@@ -139,15 +105,15 @@ module TeamStats
       games.each do |game|
         games_played += 1
         if game.home_team_id == game_team_id
-          games_won += 1 if game.outcome.include?("win") && game.outcome.include?("home")
+          games_won += 1 if game.outcome.include?("home")
         else
-          games_won += 1 if game.outcome.include?("win") && game.outcome.include?("away")
+          games_won += 1 if game.outcome.include?("away")
         end
       end
       ratios[game_team_id] = games_won / games_played.to_f
     end
     fav_opponent = ratios.min_by{|game_team_id, ratio| ratio}[0]
-    self.teams.find{|team| team.team_id == fav_opponent}.team_name
+    find_team_name(fav_opponent)
   end
 
   def rival(team_id)
@@ -176,28 +142,24 @@ module TeamStats
       games.each do |game|
         games_played += 1
         if game.home_team_id == game_team_id
-          games_won += 1 if game.outcome.include?("win") && game.outcome.include?("home")
+          games_won += 1 if game.outcome.include?("home")
         else
-          games_won += 1 if game.outcome.include?("win") && game.outcome.include?("away")
+          games_won += 1 if game.outcome.include?("away")
         end
       end
       ratios[game_team_id] = games_won / games_played.to_f
     end
     rival_id = ratios.max_by{|game_team_id, ratio| ratio}[0]
-    self.teams.find{|team| team.team_id == rival_id}.team_name
+    find_team_name(rival_id)
   end
 
   def biggest_team_blowout(team_id)
     differences = []
     self.games.each do |game|
       if game.home_team_id == team_id
-        if game.outcome.include?('home') && game.outcome.include?('win')
-          differences << game.home_goals - game.away_goals
-        end
+        differences << game.home_goals - game.away_goals if game.outcome.include?('home')
       elsif game.away_team_id == team_id
-        if game.outcome.include?('away') && game.outcome.include?('win')
-          differences << game.away_goals - game.home_goals
-        end
+        differences << game.away_goals - game.home_goals if game.outcome.include?('away')
       end
     end
     differences.max
@@ -207,13 +169,9 @@ module TeamStats
     differences = []
     self.games.each do |game|
       if game.home_team_id == team_id
-        if game.outcome.include?('away') && game.outcome.include?('win')
-          differences << game.away_goals - game.home_goals
-        end
+        differences << game.away_goals - game.home_goals if game.outcome.include?('away')
       elsif game.away_team_id == team_id
-        if game.outcome.include?('home') && game.outcome.include?('win')
-          differences << game.home_goals - game.away_goals
-        end
+        differences << game.home_goals - game.away_goals
       end
     end
     differences.max
@@ -242,9 +200,9 @@ module TeamStats
       games.each do |game|
         games_played += 1
         if game.home_team_id == team_id
-          games_won += 1 if game.outcome.include?('home') && game.outcome.include?('win')
+          games_won += 1 if game.outcome.include?('home')
         else
-          games_won += 1 if game.outcome.include?('away') && game.outcome.include?('win')
+          games_won += 1 if game.outcome.include?('away')
         end
       end
       (games_won / games_played.to_f).round(2)
@@ -257,7 +215,6 @@ module TeamStats
   end
 
   def seasonal_summary(team_id)
-    #grabs only games played by given team
     total_games_played = self.games.find_all do |game|
       if game.away_team_id == team_id
         game.away_team_id
@@ -267,22 +224,18 @@ module TeamStats
     end
 
     seasons_played = total_games_played.group_by{|game| game.season}
-
-    #creates hash: keys: season, values: hash: keys: game type values: games
     seasons_played.transform_values! do |games|
       games.group_by do |game|
         game.type
       end
     end
 
-    #creates empty postseasons if not played by team
     seasons_played.each do |season, grouped|
       if grouped.keys.length != 2
         seasons_played[season]['P'] = []
       end
     end
 
-    #changes 'P' and 'R' keys to symbols
     seasons_played.values.each do |seasons|
       seasons.keys.each do |game_type|
         if game_type == 'P'
@@ -304,11 +257,11 @@ module TeamStats
         season.each do |game|
           games_played += 1
           if game.home_team_id == team_id
-            games_won += 1 if game.outcome.include?('home') && game.outcome.include?('win')
+            games_won += 1 if game.outcome.include?('home')
             total_goals_scored += game.home_goals
             total_goals_against += game.away_goals
           elsif game.away_team_id == team_id
-            games_won += 1 if game.outcome.include?('away') && game.outcome.include?('win')
+            games_won += 1 if game.outcome.include?('away') 
             total_goals_scored += game.away_goals
             total_goals_against += game.home_goals
           end
@@ -323,13 +276,10 @@ module TeamStats
       end
     end
 
-    #changes NaN values to 0
     seasons_played.each do |season, grouped|
       grouped.each do |type, stats|
         stats.each do |stat, value|
-          if value.to_f.nan?
-            seasons_played[season][type][stat] = 0
-          end
+          seasons_played[season][type][stat] = 0 if value.to_f.nan?
         end
       end
     end
