@@ -257,4 +257,21 @@ module SeasonStats
     team_name
   end
 
+  def power_play_goal_percentage(season_id)
+    season_games = self.game_teams.find_all do |game|
+      game.game_id[0..3].include?(season_id[0..3])
+    end
+
+    total_goals = 0
+    power_play_goals = 0
+    percentage = season_games.each do |games|
+      power_play_goals += games.power_play_goals
+      total_goals += games.goals
+    end
+    
+    power_percentage = (power_play_goals/total_goals.to_f).round(2)
+
+    power_percentage
+  end
+
 end
